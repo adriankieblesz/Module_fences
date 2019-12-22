@@ -775,9 +775,12 @@ footer a:hover{
     padding: 1rem;
     font-size: 1rem;
   }
-  .logo-container{
-    
+  .logo-container{   
     background-size: 100% 150%;
+  }
+  .addictional-background{
+    background-size: 200% 450%;   
+    background-position-x: 30%;
   }
 }
 @media screen and (max-width:568px){
@@ -856,6 +859,11 @@ footer a:hover{
   .gallery{
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   }
+  .addictional-background{
+    background-size: 500% 450%;
+    
+    background-position-x: 30%;
+  }
   .form-grid{
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   }
@@ -863,4 +871,3 @@ footer a:hover{
     font-size: 1.2rem;
   }
 }
-
