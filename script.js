@@ -19,9 +19,15 @@ let scrollAppearItem = (itemName) => {
 
 let parallaxFunction = (name) => {
   const itemsPar = document.getElementsByClassName(name);
+  let scrollRatio = 0;
+  if (window.innerWidth < 1025)
+    scrollRatio = -0.15;
+  else
+    scrollRatio = -0.3;
   for (let i = 0; i < itemsPar.length; i++) {
     let offset = window.pageYOffset;
-    itemsPar[i].style.backgroundPositionY = offset * (-0.3) + "px";
+    itemsPar[i].style.backgroundPositionY = offset * scrollRatio + "px";
+    console.log(scrollRatio);
   }
 }
 
