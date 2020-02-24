@@ -1,3 +1,4 @@
+//Function that is responsible for executing show animation for visible elements
 let scrollAppearItem = (itemName) => {
   const items = document.getElementsByClassName(itemName);
   for (let i = 0; i < items.length; i++) {
@@ -16,10 +17,11 @@ let scrollAppearItem = (itemName) => {
     }
   }
 }
-
+//Parallax effect
 let parallaxFunction = (name) => {
   const itemsPar = document.getElementsByClassName(name);
   let scrollRatio = 0;
+  //Change scroll ratio if mobile mode
   if (window.innerWidth < 1025)
     scrollRatio = -0.15;
   else
@@ -27,7 +29,6 @@ let parallaxFunction = (name) => {
   for (let i = 0; i < itemsPar.length; i++) {
     let offset = window.pageYOffset;
     itemsPar[i].style.backgroundPositionY = offset * scrollRatio + "px";
-    console.log(scrollRatio);
   }
 }
 
@@ -38,14 +39,17 @@ window.addEventListener("scroll", () => {
 
 var input = document.getElementById("btn");
 var photo = document.querySelector(".photo-holder");
+//Prevent showing context menu when right clicked inside of photo holder box
 photo.addEventListener("contextmenu", e => {
   e.preventDefault();
 })
+//Function responsible for loading photo
 let uploadPhotos = () => {
+  //Clear photo if exists while loading another
   while (photo.firstChild) {
     photo.removeChild(photo.firstChild);
   }
-
+  //If photo is not choosen
   var currentFiles = input.files;
   if (currentFiles.length === 0) {
     var noFile = document.createElement("p");
@@ -68,7 +72,7 @@ let uploadPhotos = () => {
 }
 
 input.addEventListener("change", uploadPhotos);
-
+//Load and position new dragable element
 var dragElements = document.getElementsByClassName("image-list-item");
 for (let i = 0; i < dragElements.length; i++) {
   dragElements[i].addEventListener("click", () => {
@@ -78,52 +82,74 @@ for (let i = 0; i < dragElements.length; i++) {
     newElement.style.width = "25%";
     newElement.style.height = "25%";
     newElement.style.position = "absolute";
-    newElement.style.bottom = "0";
+    newElement.style.top = "0";
     newElement.style.left = "0";
     newElement.style.cursor = "pointer";
     photo.appendChild(newElement);
     newElement.addEventListener("mousedown", dragElement(newElement));
     newElement.addEventListener("mousedown", () => {
-      if (event.button == 2) {
+      if ((window.innerWidth >= 1025 && event.button == 2) || (window.innerWidth < 1025 && event.touches[1])) {
         photo.removeChild(newElement);
       }
     })
   })
 }
-
-
-
+//Function responsible for dragging elements
 function dragElement(element) {
   var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
   element.onmousedown = dragMouseDown;
+  element.ontouchstart = dragMouseDown;
   function dragMouseDown(e) {
     e = e || window.event;
-    e.preventDefault();
-    pos3 = e.clientX;
-    pos4 = e.clientY;
+    //if desktope mode calculate according start positions for desktop
+    if (window.innerWidth >= 1025) {
+      e.preventDefault();
+      pos3 = e.clientX;
+      pos4 = e.clientY;
+    }
+    //if mobile mode calculate according start positions for mobile
+    else {
+      e.preventDefault();
+      pos3 = e.touches[0].pageX;
+      pos4 = e.touches[0].pageY;
+    }
+    //Set proper events
     document.onmouseup = closeDragElement;
     document.onmousemove = elementDrag;
+    document.ontouchend = closeDragElement;
+    document.ontouchmove = elementDrag;
   }
 
   function elementDrag(e) {
     e = e || window.event;
-    e.preventDefault();
-    // calculate the new cursor position:
-    pos1 = pos3 - e.clientX;
-    pos2 = pos4 - e.clientY;
-    pos3 = e.clientX;
-    pos4 = e.clientY;
-    // set the element's new position:
+    //If desktop mode calculate according moved positons for desktop
+    if (window.innerWidth > 1025) {
+      e.preventDefault();
+      pos1 = pos3 - e.clientX;
+      pos2 = pos4 - e.clientY;
+      pos3 = e.clientX;
+      pos4 = e.clientY;
+    }
+    //If mobile mode calculate according moved positions for mobile
+    else {
+      pos1 = pos3 - e.touches[0].pageX;
+      pos2 = pos4 - e.touches[0].pageY;
+      pos3 = e.touches[0].pageX;
+      pos4 = e.touches[0].pageY;
+    }
     element.style.left = (element.offsetLeft - pos1) + "px";
     element.style.top = (element.offsetTop - pos2) + "px";
   }
   function closeDragElement() {
-    /* stop moving when mouse button is released:*/
+    /* stop moving when mouse button is released or touch is end:*/
     document.onmouseup = null;
     document.onmousemove = null;
+    document.ontouchend = null;
+    document.ontouchmove = null;
   }
 }
 
+//Validation message form
 const form = document.querySelector('.form');
 const email = document.querySelector('#email');
 const emailSpan = document.querySelector('.email-span');
@@ -140,21 +166,24 @@ let validEmail = false;
 let validTopic = false;
 let validNumber = true;
 let validMessage = false;
-
+//Regex for email
 let validateEmail = email => {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
+//Regex for phone number
 let validateNr = nr => {
   return /^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$/.test(nr)
 }
 
 email.addEventListener('keyup', (e) => {
+  //if key is up and validation is positive set status to valid
   if (validateEmail(e.target.value)) {
     emailSpan.classList.remove("showAllert");
     email.classList.remove("invalid");
     email.classList.add("valid");
     validEmail = true;
   }
+  //if key is up and validation is negative set status to invalid
   else {
     emailSpan.classList.add("showAllert");
     email.classList.remove("valid");
@@ -208,7 +237,7 @@ form.addEventListener('submit', e => {
     submitSpan.classList.add('showSecondAllert');
   }
 })
-
+//Features for menu button in mobile mode
 const nav = document.querySelector('#nav');
 const navBtn = document.querySelector('.nav-btn-container');
 let isClicked = false;
@@ -229,7 +258,7 @@ navBtn.addEventListener('click', e => {
     isClicked = true;
   }
 })
-
+//If link is clicked then automatically close menu (mobile mode)
 const links = document.getElementsByClassName('nav-link');
 for (let i = 0; i < links.length; i++) {
   links[i].addEventListener('click', () => {
@@ -241,7 +270,7 @@ for (let i = 0; i < links.length; i++) {
   })
 }
 
-
+//Smooth scrolling
 const scroll = new SmoothScroll('#nav a[href*="#"]', {
   speed: 500
 });
